@@ -1,0 +1,107 @@
+== A tiny and simple chess engine
+:experimental:
+:imagesdir: http://ssalewski.de/tmp
+(c) 2015 - 2032 Stefan Salewski +
+Version 0.2, 24-AUG-2022
+
+This repository contains a tiny chess engine written from scratch in the Nim programming language.
+The engine uses the well known alpha-beta-pruning for move reduction and a transposition table
+to recover already evaluated positions fast.
+The possible moves of a chess piece on the board are pre-calculated, in a similar way as it
+was done in early GNU chess in the late 1980s. No special chess knowledge is used, and complicated
+stuff like the use of bitboards have been avoided. The result is a tiny and simple chess engine, which still
+is a good opponent for human players. The whole chess engine module contains about 1k lines of code only, and the
+actual engine procedure called abeta() has only 300 lines of code. One disadvantage of this chess engine is, that
+it uses a lot of RAM: For running it, your computer should have a few GB main memory, at least 2 GB. Using the engine with
+only 1 GB of RAM should be possible, when you reduce the size of the transposition table, but that reduces
+the playing strength. But even oldest laptops, cellphones or the raspberry pi should provide the necessary 2 GB.
+
+Currently two very basic frontends are available, one for GTK3, and one for GTK4.
+The generated executables are only 100KB in size!
+
+This chess engine should be a good start for people who want to understand how a simple chess
+engine works, and who want to create a custom GUI frontend. As the engine is so tiny and simple,
+converting to other programming languages should be really easy.
+
+This engine is actually based on an early, ugly draft created in 2015 called nim-chess4. The fact that the final
+engine is so simple and tiny does not really mean that creating it was not some effort. While use of alpha-beta-pruning
+and use of a transposition table is really simple on its own, its combination can generate some problems.
+And debugging recursive code like a chess algorithm can be hard: We may have totally spend 300 hours for creating the algorithm,
+200 hours for debugging, and 50 hours for the GTK front end.
+
+=== Visual appearance of the GTK demo app
+
+image::salewski_chess.png[]
+
+=== Properties of the engine
+
+- written in Nim language
+- basic GTK3 and GTK4 GUI using high level gintro API
+- only 1500 lines of pure Nim code, only 300 lines for the actual engine procedure
+- move generation is based on an old gnuchess idea
+- core component is of course alpha-beta-prunning
+- a transposition table is used to store and reuse old results
+
+With a time limit of a few seconds per move computation is generally 7 ply deep
+full width, with additional full capture analyses (quiescence search). Special moves
+like chess offers or captures can be depth extended (disabled by default), which may further increase
+playing strength, but we have not yet really verified that.
+In endgame
+depth of 10 ply and more is archived -- now even the most difficult endgame
+king vs king/bishop/knight is solved in few moves/seconds. And we have added a set based
+history to prevent engine from repeating old positions.
+
+Currently the board and the transposition table are global variables, and some other global variables are used as well.
+It should be not difficult for you to use a board parameter for the abeta() proc, to get a more
+OOP like behaviour. Using a value parameter for the board, would further simplify the engine, as
+undoing moves would not be necessary.
+Of course an opening library would further increase playing strength, it should be easy for you to add
+one when you want it. Loading and saving games should be an easy exercise for you as well.
+And adding chess clocks, a way to set up positions, to specify time restrictions or choose the colors for
+human and computer is trivial. A bit more demanding is running the engine in the background when
+longer time periods per move are desired -- this may depend on the actual GUI toolkit you may intend to use.
+Creating a chess engine which works in parallel on multiple CPU cores is a more difficult task --
+as a starting point you could make the move generation parallel, which should be not that difficult, but
+may not increase performance that much. 
+
+The graphical user interface is very basic currently -- we play with white pieces against
+the computer. No undo, no hints. For next game we have to restart the program. At least the GUI
+is one more example for the use of the gintro Nim GTK bindings
+
+Maybe we will describe the engine in some more detail in a next edition of the Nim book, as some people have
+asked for a section about game and GUI programming. 
+
+=== Installation
+
+We assume that you have already a working Nim compiler available on your box.
+
+For Linux:
+
+First install gintro, the gobject-introspection based high level GTK3 and GTK4 bindings
+https://github.com/StefanSalewski/gintro with this command:
+
+----
+nimble install gintro
+----
+
+And then
+
+----
+git clone https://github.com/stefansalewski/salewski-chess.git
+cd salewski-chess
+
+nim c --opt:speed board_gtk4.nim
+./board_gtk4
+
+Or when you should still have only old GTK3 available:
+
+nim c --opt:speed board_gtk3.nim
+./board_gtk3
+
+After first tests, you may try for best performance and a tiny executable:
+nim c -d:danger -d:useMalloc --gc:arc -d:lto --passc:-march=native board_gtk4.nim
+----
+
+It may be possible to use it on Windows or with MacOSX as well. You may also compile it
+with -d:salewskiChessDebug to get some debugging output.
+
