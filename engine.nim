@@ -1,5 +1,5 @@
 # The Salewski Chess Engine
-# v 0.2 -- 24-AUG-2022
+# v 0.2 -- 04-JAN-2023
 # (C) 2015 - 2032 Dr. Stefan Salewski
 # All rights reserved.
 #
@@ -914,7 +914,7 @@ proc abeta(color: Color; vdepth, cup, alpha0, beta, oldListlen, eppos: int): Mov
       let isAKingelsf = isAKing(el.sf)
       let elsieldi = el.si - el.di
       let littleCastling = isAKingelsf and elsieldi == 2 # castling candidates
-      let bigCastling = isAKingelsf and elsieldi == -3
+      let bigCastling = isAKingelsf and elsieldi == -2
       let enPassant = isAPawnelsf and el.df == VoidID and elsieldi.odd # move is an eP capture candidate
 
       if littleCastling and (el.si in hasMoved or el.si - 3 in hasMoved): # we always generate castling moves but
