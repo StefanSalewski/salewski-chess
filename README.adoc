@@ -4,6 +4,16 @@
 (c) 2015 - 2032 Stefan Salewski +
 Version 0.2, 24-AUG-2022
 
+=== Deprecated
+
+This version is now deprecated. The Nim engine uses global variables for storing the board state, which
+is a bit ugly -- we always planned to change that. And the Nim version should have two tiny bugs, which
+have been discovered by users in the Rust port, and are now fixes. Additional, the Rust port has smart
+depth entensions, which better protect attacked king and queen. Feel free to port the Rust version back to
+Nim if you desire. You have only to port the engine, and might reuse the Nim GTK GUI if you are still able to
+compile it with a recent Nim compiler. The engine port should be trivial and took only a few hours, perhaps an
+AI can do it already. For the GUI -- well you can always create a simple GUI with one of the other Nim GUI toolkits. 
+
 This repository contains a tiny chess engine written from scratch in the Nim programming language.
 The engine uses the well known alpha-beta-pruning for move reduction and a transposition table
 to recover already evaluated positions fast.
